@@ -1,0 +1,14 @@
+<launch> 
+	<arg name="node_start_delay_1" default="10.0"/>
+	<arg name="node_start_delay_2" default="5.0"/>
+    <include file="$(find px4)/launch/mavros_posix_sitl.launch" /> 
+    <include file="$(find orb_slam2_ros)/ros/launch/orb_slam2_r200_rgbd.launch" />
+
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find orb_slam2_ros)/ros/config/rviz_config.rviz" launch-prefix="bash -c 'sleep $(arg node_start_delay_1); $0 $@' "/>
+
+    <node pkg="frame_detection" name="broadcaster_ptcld" type="broadcaster_ptcld.py" output="screen"/>
+
+    <node pkg="frame_detection" name="frame_point" type="frame_point.py" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay_2); $0 $@' "/>
+
+    <node pkg="autopilot" name="autopilot" type="autopilot.py" output="screen"/> 
+</launch>
